@@ -91,47 +91,23 @@ def get_complement(sequence):
     >>> get_complement('AUGC')
     'UACG'
     """
-    complementary_strand = ""
+    seq_upper = sequence.upper()
+    # assert 'T' not in seq_upper, "Hey, RNA only!"
+    complement = {
+            'c' : 'G',
+            'G' : 'C',
+            }
+    if 'T' in seq_upper:
+        complement['T'] = 'A'
+        complement['A'] = 'T'
+    else:
+        complement['U'] = 'A'
+        complement['A'] = 'U'
 
-    # looping through the
-    # given sequence one
-    # by one character at
-    # a time 
-    for base in sequence:
-        # using if-elif-else
-        # conditional statement
-        if base == "A" :
-            # string concatenation
-            complementary_strand += "T"
-
-        elif base == "T" :
-            complementary_strand += "A"
-
-        elif base == "U" :
-            complementary_strand += "A"
-
-        elif base == "G" :
-            complementary_strand += "C"
-
-        elif base == "C" :
-            complementary_strand += "G"
-
-        elif base == "Y" :
-            complementary_strand += "R"
-
-        elif base == "R" :
-            complementary_strand += "Y"
-
-        else :
-            print("empty string")
-
-            # break out of the loop
-            # if wrong input is given
-            break
-
-    # return final result
-    return complementary_strand
-    print(complementary_strand)
+    comp_seq = ""
+    for character in seq_upper:
+        comp_seq += complement[character]
+    return comp_seq
 
 def reverse_and_complement(sequence):
     """Get the reversed and complemented form of a `sequence` of nucleotides.
@@ -146,10 +122,10 @@ def reverse_and_complement(sequence):
     >>> reverse_and_complement('AUGC')
     'GCAU'
     """
-    reverse_seq = get_reverse(seqquence)
+    reverse_seq = get_reverse(sequence)
     reverse_complement_seq= get_complement(reverse_seq)
     return reverse_complement_seq
-
+    pass
 def get_longest_peptide(rna_sequence, genetic_code):
     """Get the longest peptide encoded by an RNA sequence.
 
