@@ -75,8 +75,9 @@ def get_reverse(sequence):
     >>> get_reverse('AUGC')
     'CGUA'
     """
-    seq = sequence.upper()
-    rev_seq = sequence.upper()[::-1]
+    seq_list = list(sequence.upper())
+    seq_list.reverse()
+    rev_seq = "".join(seq_list)
     return rev_seq
 
 def get_complement(sequence):
@@ -91,23 +92,18 @@ def get_complement(sequence):
     >>> get_complement('AUGC')
     'UACG'
     """
-    seq_upper = sequence.upper()
-    # assert 'T' not in seq_upper, "Hey, RNA only!"
-    complement = {
-            'c' : 'G',
-            'G' : 'C',
+    rna_complement = {
+            'A': 'U',
+            'C': 'G',
+            'G': 'C',
+            'U': 'A',
             }
-    if 'T' in seq_upper:
-        complement['T'] = 'A'
-        complement['A'] = 'T'
-    else:
-        complement['U'] = 'A'
-        complement['A'] = 'U'
 
-    comp_seq = ""
-    for character in seq_upper:
-        comp_seq += complement[character]
-    return comp_seq
+    complementary_seq_list = []
+    for character in sequence:
+        complentary_seq_list.append(rna_complement[character.upper()])
+    complementary_seq = "".join(complementary_seq_list)
+    return complementary_seq
 
 def reverse_and_complement(sequence):
     """Get the reversed and complemented form of a `sequence` of nucleotides.
@@ -125,7 +121,7 @@ def reverse_and_complement(sequence):
     reverse_seq = get_reverse(sequence)
     reverse_complement_seq= get_complement(reverse_seq)
     return reverse_complement_seq
-    pass
+
 def get_longest_peptide(rna_sequence, genetic_code):
     """Get the longest peptide encoded by an RNA sequence.
 
@@ -153,8 +149,20 @@ def get_longest_peptide(rna_sequence, genetic_code):
         A string of the longest sequence of amino acids encoded by
         `rna_sequence`.
     """
-    pass
-
+    peptides = get_all_translations(rna_sequence = rna_sequence, genetic_code = genetic_code)
+    rev_comp_seq = reverse_and_complement(rna_sequence)
+    rev_comp_peptides = get_all_translations(rna_sequence = rev_comp_seq, genetic_code = genetic_code)
+    peptides += rev_comp_peptides
+    if not peptides:
+        return ""
+    if len(peptides) < 2:
+        return peptides[0]
+    most_number_of_bases = -1
+    for peptide_index, aa_seq in enumerate(peptides):
+        if len(aa_seq) > most_number_of_bases:
+            longest_peptide_index = peptide_index
+            most_number_of_bases = len(aa_seq)
+    return peptides[longest_peptide_index]
 
 if __name__ == '__main__':
     genetic_code = {'GUC': 'V', 'ACC': 'T', 'GUA': 'V', 'GUG': 'V', 'ACU': 'T', 'AAC': 'N', 'CCU': 'P', 'UGG': 'W', 'AGC': 'S', 'AUC': 'I', 'CAU': 'H', 'AAU': 'N', 'AGU': 'S', 'GUU': 'V', 'CAC': 'H', 'ACG': 'T', 'CCG': 'P', 'CCA': 'P', 'ACA': 'T', 'CCC': 'P', 'UGU': 'C', 'GGU': 'G', 'UCU': 'S', 'GCG': 'A', 'UGC': 'C', 'CAG': 'Q', 'GAU': 'D', 'UAU': 'Y', 'CGG': 'R', 'UCG': 'S', 'AGG': 'R', 'GGG': 'G', 'UCC': 'S', 'UCA': 'S', 'UAA': '*', 'GGA': 'G', 'UAC': 'Y', 'GAC': 'D', 'UAG': '*', 'AUA': 'I', 'GCA': 'A', 'CUU': 'L', 'GGC': 'G', 'AUG': 'M', 'CUG': 'L', 'GAG': 'E', 'CUC': 'L', 'AGA': 'R', 'CUA': 'L', 'GCC': 'A', 'AAA': 'K', 'AAG': 'K', 'CAA': 'Q', 'UUU': 'F', 'CGU': 'R', 'CGC': 'R', 'CGA': 'R', 'GCU': 'A', 'GAA': 'E', 'AUU': 'I', 'UUG': 'L', 'UUA': 'L', 'UGA': '*', 'UUC': 'F'}
